@@ -1,3 +1,5 @@
+use std::net::IpAddr;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -21,4 +23,8 @@ pub struct Metadata {
     _type: MetadataType,
     version: u16,
     visibleName: String,
+}
+
+struct Remarkable {
+    ip: IpAddr,
 }

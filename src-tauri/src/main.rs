@@ -3,15 +3,9 @@
     windows_subsystem = "windows"
 )]
 
-use std::{
-    collections::HashSet,
-    fs::{read_dir, read_to_string},
-    path::PathBuf,
-};
+use std::sync::Mutex;
 
-mod remarkable;
-
-fn find_ip() {}
+use app::RemarkableClient;
 
 #[tauri::command]
 fn open_explorer() {
@@ -30,7 +24,14 @@ fn open_explorer() {
 }
 
 #[tauri::command]
-fn files(path: PathBuf) -> Vec<String> {
+fn devices(state: tauri::State<RemarkableClientState>) -> Vec<String> {
+    let mut client = state.0.lock().unwrap();
+    todo!()
+}
+
+#[tauri::command]
+fn files() -> Vec<String> {
+    // scan_network();
     // let mut visited = HashSet::new();
     return vec!["asdf".to_owned(), "asdf".to_owned()];
     // read_dir(path)
@@ -77,9 +78,12 @@ fn files(path: PathBuf) -> Vec<String> {
     //     .into()
 }
 
+struct RemarkableClientState(Mutex<RemarkableClient>);
+
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![open_explorer, files])
+        .manage(RemarkableClientState(Mutex::new(RemarkableClient::new())))
+        .invoke_handler(tauri::generate_handler![open_explorer, devices, files])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
