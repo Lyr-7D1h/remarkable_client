@@ -1,4 +1,4 @@
-use std::{net::IpAddr, ops::Rem};
+use std::net::IpAddr;
 
 use scan::scan_network;
 use state::State;
@@ -19,8 +19,8 @@ impl RemarkableClient {
     }
 
     /// Scan local network for remarkable devices
-    pub fn scan() -> Vec<IpAddr> {
-        scan_network();
+    pub async fn scan(&self) -> Vec<IpAddr> {
+        scan_network().await;
         todo!();
     }
 }

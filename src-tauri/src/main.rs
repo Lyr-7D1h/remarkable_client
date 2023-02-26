@@ -3,9 +3,8 @@
     windows_subsystem = "windows"
 )]
 
-use std::sync::Mutex;
-
 use app::RemarkableClient;
+use tauri::async_runtime::Mutex;
 
 #[tauri::command]
 fn open_explorer() {
@@ -24,8 +23,9 @@ fn open_explorer() {
 }
 
 #[tauri::command]
-fn devices(state: tauri::State<RemarkableClientState>) -> Vec<String> {
-    let mut client = state.0.lock().unwrap();
+async fn devices(state: tauri::State<'_, Mutex<RemarkableClient>>) -> Result<Vec<String>, ()> {
+    let client = state.lock().await;
+    client.scan().await;
     todo!()
 }
 
@@ -78,11 +78,12 @@ fn files() -> Vec<String> {
     //     .into()
 }
 
-struct RemarkableClientState(Mutex<RemarkableClient>);
+// struct RemarkableClientState(Mutex<RemarkableClient>);
 
 fn main() {
     tauri::Builder::default()
-        .manage(RemarkableClientState(Mutex::new(RemarkableClient::new())))
+        // .manage(RemarkableClientState(Mutex::new(RemarkableClient::new())))
+        .manage(Mutex::new(RemarkableClient::new()))
         .invoke_handler(tauri::generate_handler![open_explorer, devices, files])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
