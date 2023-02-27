@@ -22,7 +22,7 @@ pub struct State {
     _path: PathBuf,
 
     /// Device indexed by mac address
-    devices: HashMap<String, Device>,
+    pub devices: HashMap<String, Device>,
 }
 
 impl State {

@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use app::RemarkableClient;
+use app::{Device, RemarkableClient, ScanEntry};
 use tauri::async_runtime::Mutex;
 
 #[tauri::command]
@@ -23,10 +23,9 @@ fn open_explorer() {
 }
 
 #[tauri::command]
-async fn devices(state: tauri::State<'_, Mutex<RemarkableClient>>) -> Result<Vec<String>, ()> {
+async fn devices(state: tauri::State<'_, Mutex<RemarkableClient>>) -> Result<Vec<ScanEntry>, ()> {
     let client = state.lock().await;
-    client.scan().await;
-    todo!()
+    return Ok(client.devices().await);
 }
 
 #[tauri::command]
