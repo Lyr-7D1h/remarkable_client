@@ -24,6 +24,18 @@ body {
   user-select: none;
 }
 
+button {
+  background-color: white;
+  border: 1px solid var(--dark-hl);
+  display: inline-flex;
+  align-items: center;
+}
+button svg {
+  width: 20px;
+  height: 20px;
+  fill: var(--dark);
+}
+
 h1 {
   font-weight: bolder;
   margin-top: 10px;
@@ -75,7 +87,9 @@ main {
   display: flex;
   align-items: center;
 }
-
+#devices_block {
+  padding: 10px;
+}
 #loading_block {
   position: relative;
   width: 100%;
