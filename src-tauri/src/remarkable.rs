@@ -1,30 +1,31 @@
-use std::net::IpAddr;
+use std::{
+    error::Error,
+    net::{IpAddr, SocketAddr, TcpStream},
+};
 
-use serde::{Deserialize, Serialize};
+use ssh2::Session;
 
-#[derive(Serialize, Deserialize, Debug)]
-pub enum MetadataType {
-    DocumentType,
-    CollectionType,
+use crate::Device;
+
+pub mod filesystem;
+
+pub struct Remarkable {
+    session: Session,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Metadata {
-    deleted: bool,
-    lastModified: String,
-    lastOpened: Option<String>,
-    lastOpenedPage: Option<u32>,
-    metadatamodified: bool,
-    modified: bool,
-    parent: String,
-    pinned: bool,
-    synced: bool,
-    #[serde(rename(deserialize = "type"))]
-    _type: MetadataType,
-    version: u16,
-    visibleName: String,
-}
+impl Remarkable {
+    pub fn connect(device: &Device) -> Result<Remarkable, Box<dyn Error>> {
+        let tcp = TcpStream::connect(SocketAddr::new(device.ip, 22))?;
+        let mut session = Session::new().unwrap();
+        session.set_tcp_stream(tcp);
+        session.handshake().unwrap();
 
-struct Remarkable {
-    ip: IpAddr,
+        session.userauth_password(&device.username, &device.password)?;
+
+        if session.authenticated() {
+            return Err("Failed to authenticated".into());
+        }
+
+        Ok(Remarkable { session })
+    }
 }

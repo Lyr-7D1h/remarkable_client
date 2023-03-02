@@ -3,6 +3,7 @@
   --dark-hl: #333333;
   --text-color: #222222;
   --light: #efefef;
+  --light-dl: #eeeeee;
 }
 
 @font-face {
@@ -27,8 +28,14 @@ body {
 button {
   background-color: white;
   border: 1px solid var(--dark-hl);
+  border-radius: 5px;
+  background-color: rgb(245, 245, 245);
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
+}
+button:hover {
+  background-color: var(--light-dl);
 }
 button svg {
   width: 20px;
@@ -97,4 +104,13 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+#error_block {
+  color: darkred;
+  width: 100%;
+  position: absolute;
+  font-size: 2em;
+  padding: 20px;
+  background-color: white;
+  opacity: 0.8;
 }

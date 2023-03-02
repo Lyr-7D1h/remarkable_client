@@ -1,10 +1,10 @@
 use std::{
+    error::Error,
     net::{IpAddr, SocketAddr},
-    sync::Arc,
     time::Duration,
 };
 
-use futures::{future, lock::Mutex, stream, StreamExt};
+use futures::future;
 use local_ip_address::local_ip;
 use tokio::net::TcpStream;
 
@@ -33,8 +33,8 @@ async fn is_remarkable_device(target: IpAddr, table: &ArpTable) -> Option<(IpAdd
 }
 
 /// Scan your local network for remarkable devices, returns ip and mac address
-pub async fn scan_network() -> Vec<(IpAddr, String)> {
-    let local_ip = local_ip().unwrap();
+pub async fn scan_network() -> Result<Vec<(IpAddr, String)>, Box<dyn Error>> {
+    let local_ip = local_ip()?;
     if local_ip.is_ipv6() {
         panic!("Ipv6 not supported");
     }
@@ -54,5 +54,5 @@ pub async fn scan_network() -> Vec<(IpAddr, String)> {
     }))
     .await;
 
-    return entries.into_iter().filter_map(|e| e).collect();
+    return Ok(entries.into_iter().filter_map(|e| e).collect());
 }
