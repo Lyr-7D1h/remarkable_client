@@ -3,9 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use std::error::Error;
-
-use app::{RemarkableClient, ScanEntry};
+use app::{Device, RemarkableClient, ScanEntry};
 use tauri::async_runtime::Mutex;
 
 // #[tauri::command]
@@ -25,22 +23,32 @@ use tauri::async_runtime::Mutex;
 // }
 //
 #[tauri::command]
-async fn devices(
-    state: tauri::State<'_, Mutex<RemarkableClient>>,
-) -> Result<Vec<ScanEntry>, String> {
+async fn scan(state: tauri::State<'_, Mutex<RemarkableClient>>) -> Result<Vec<ScanEntry>, String> {
     let client = state.lock().await;
-    return client.devices().await.map_err(|e| e.to_string());
+    return client.scan().await.map_err(|e| e.to_string());
+}
+
+#[tauri::command]
+async fn add_device(
+    mac: String,
+    device: Device,
+    state: tauri::State<'_, Mutex<RemarkableClient>>,
+) -> Result<(), String> {
+    let mut client = state.lock().await;
+    return client.add_device(mac, device).map_err(|e| e.to_string());
 }
 
 #[tauri::command]
 async fn fs(
     mac: String,
     state: tauri::State<'_, Mutex<RemarkableClient>>,
-) -> Result<Vec<String>, ()> {
+) -> Result<Vec<String>, String> {
     let client = state.lock().await;
+
+    return Err("asdf".into());
     // scan_network();
     // let mut visited = HashSet::new();
-    return Ok(vec!["asdf".to_owned(), "asdf".to_owned()]);
+    // return Ok(vec!["asdf".to_owned(), "asdf".to_owned()]);
     // read_dir(path)
     //     .unwrap()
     //     .into_iter()
@@ -91,7 +99,7 @@ fn main() {
     tauri::Builder::default()
         // .manage(RemarkableClientState(Mutex::new(RemarkableClient::new())))
         .manage(Mutex::new(RemarkableClient::new()))
-        .invoke_handler(tauri::generate_handler![devices, fs])
+        .invoke_handler(tauri::generate_handler![scan, add_device, fs])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

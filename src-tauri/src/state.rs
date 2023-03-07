@@ -14,6 +14,7 @@ pub struct Device {
     pub ip: IpAddr,
     pub username: String,
     pub password: String,
+    pub name: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
