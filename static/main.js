@@ -19,14 +19,31 @@ const deviceButton = (device) => `
   ${device.ip}
 </button>`;
 
+function addDevice(e) {
+  console.log(e);
+  invoke("add_device", { mac: device.mac, device })
+    .then(() => {
+      closeModal();
+      connect();
+    })
+    .catch();
+}
+
 /// Connect to a device
 function connect(device) {
   if (device.known === false) {
-    invoke("add_device", { mac: device.mac }).catch();
+    modal(`<form onsubmit="addDevice()">
+  <label for='username'>Username:</label><br>
+  <input type='text' id='username' name='username' value='root'><br>
+  <label for='password'>Password:</label><br>
+  <input type='password' id='password' name='password' value=''><br><br>
+  <input type='submit' value='Connect'>
+</form>`);
+  } else {
+    invoke("fs", { mac }).then((fs) => {
+      console.log(fs);
+    });
   }
-  invoke("fs", { mac }).then((fs) => {
-    console.log(fs);
-  });
 }
 
 function render() {
@@ -38,4 +55,20 @@ function render() {
   ).map(deviceButton)}</div>`;
   document.getElementById("loading_block").style.display = "none";
   document.getElementById("devices_block").style.display = "block";
+}
+
+function closeModal(event) {
+  const modal = document.getElementById("modal");
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+function modal(html) {
+  const modal = document.getElementById("modal");
+  document.getElementById("modal_content").innerHTML = html;
+  modal.style.display = "block";
+  document.getElementById("modal_close").onclick = closeModal;
+  window.onclick = (event) => {
+    if (event.target == modal) closeModal();
+  };
 }
