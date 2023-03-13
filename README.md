@@ -23,3 +23,10 @@ cargo tauri dev
 # Roadmap
 
 - Custom sleep cover
+- Filesystem
+	- Modify and move files and folders
+	- Change tags
+- Plugin manager
+- Backup
+	- Local
+	- Google Drive
