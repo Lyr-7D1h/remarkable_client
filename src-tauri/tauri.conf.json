@@ -7,7 +7,7 @@
     "withGlobalTauri": true
   },
   "package": {
-    "productName": "rmclient",
+    "productName": "remarkable-client",
     "version": "0.1.0"
   },
   "tauri": {
@@ -19,7 +19,7 @@
     },
     "bundle": {
       "active": true,
-      "category": "DeveloperTool",
+      "category": "Productivity",
       "copyright": "",
       "deb": {
         "depends": []
@@ -61,9 +61,13 @@
         "fullscreen": false,
         "height": 600,
         "resizable": true,
-        "title": "reMarkable",
-        "width": 800
+        "title": "Remarkable Client",
+        "width": 800,
+        "fileDropEnabled": true
       }
-    ]
+    ],
+    "systemTray": {
+      "iconPath": "icon.png"
+    }
   }
 }
