@@ -1,12 +1,17 @@
 use std::{
+    collections::HashSet,
     error::Error,
+    fs::read_dir,
+    io::Read,
     net::{IpAddr, SocketAddr, TcpStream},
+    path::Path,
 };
 
 use ssh2::Session;
 
-pub mod filesystem;
+use crate::RemarkableError;
 
+/// A simple client for interacting with the remarkable
 pub struct Remarkable {
     session: Session,
 }
@@ -29,5 +34,20 @@ impl Remarkable {
         }
 
         Ok(Remarkable { session })
+    }
+
+    /// Synchronize all files from the remarkable to a local path
+    pub fn sync(&self, local_path: &Path) -> Result<(), RemarkableError> {
+        todo!()
+    }
+
+    pub fn exec(&self, command: &str) -> Result<(i32, String), RemarkableError> {
+        let mut channel = self.session.channel_session().unwrap();
+        channel.exec(command).unwrap();
+        let mut s = String::new();
+        channel.read_to_string(&mut s).unwrap();
+        channel.wait_close();
+        let exit_code = channel.exit_status()?;
+        return Ok((exit_code, s));
     }
 }

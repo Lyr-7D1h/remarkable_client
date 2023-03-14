@@ -6,13 +6,17 @@ use serde::{Deserialize, Serialize};
 use state::State;
 
 mod arp_table;
+mod filesystem;
 mod remarkable;
 mod scan;
 mod state;
 
+pub use filesystem::Folder;
 pub use state::Device;
 
 pub type RemarkableError = Box<dyn Error>;
+
+const PRODUCT_NAME: &'static str = "rmclient";
 
 pub struct RemarkableClient {
     pub state: State,
@@ -53,19 +57,35 @@ impl RemarkableClient {
     pub fn add_device(&mut self, mac: String, device: Device) -> Result<(), RemarkableError> {
         Remarkable::connect(device.ip, &device.username, &device.password)?;
         self.state.devices.insert(mac, device);
+        self.state.save()?;
         Ok(())
     }
 
-    /// Connect to a device
-    pub async fn connect(&self, mac: &String) -> Result<(), Box<dyn Error>> {
-        match self.state.devices.get(mac) {
+    /// Connect to a device and save the connection for future interactions
+    pub async fn connect(&mut self, mac: String) -> Result<(), Box<dyn Error>> {
+        match self.state.devices.get(&mac) {
             Some(device) => {
                 let remarkable =
                     Remarkable::connect(device.ip, &device.username, &device.password)?;
+                self.connections.insert(mac, remarkable);
             }
-            None => {}
+            None => return Err(format!("Please add device '{mac}' first before connecting").into()),
         }
 
-        todo!()
+        Ok(())
+    }
+
+    pub async fn fs(&self, mac: &String) -> Result<Folder, RemarkableError> {
+        match self.connections.get(mac) {
+            Some(c) => {
+                // c.sync(),
+                todo!()
+            }
+            None => {
+                return Err(
+                    "Please connect to the device first before requesting filesystem".into(),
+                )
+            }
+        }
     }
 }
