@@ -1,5 +1,7 @@
 # reMarkable Desktop Local
 
+**WORK IN PROGRESS**
+
 A reMarkable client for accessing your remarkable files locally.
 
 Currently only supported for **Linux** and tested on the **Remarkable2 V3+**
@@ -17,4 +19,14 @@ cargo install tauri-cli
 cargo tauri dev
 ```
 
-**WORK IN PROGRESS**
+
+# Roadmap
+
+- Custom sleep cover
+- Filesystem
+	- Modify and move files and folders
+	- Change tags
+- Plugin manager
+- Backup
+	- Local
+	- Google Drive

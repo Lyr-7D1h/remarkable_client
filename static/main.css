@@ -25,22 +25,45 @@ body {
   user-select: none;
 }
 
-button {
-  background-color: white;
+form {
+  width: 200px;
+  padding: 20px;
+}
+input[type="text"],
+input[type="password"] {
+  padding: 10px;
+  margin: 8px;
+}
+input[type="submit"] {
+  width: 100%;
+  margin-left: 8px;
+  padding-right: 10px;
+}
+
+button,
+input[type="submit"] {
+  background-color: var(--dark);
+  color: var(--light);
   border: 1px solid var(--dark-hl);
   border-radius: 5px;
-  background-color: rgb(245, 245, 245);
   cursor: pointer;
+  padding: 10px;
   display: inline-flex;
   align-items: center;
 }
-button:hover {
-  background-color: var(--light-dl);
+button:hover,
+input[type="submit"]:hover {
+  background-color: var(--dark-hl);
 }
 button svg {
   width: 20px;
   height: 20px;
   fill: var(--dark);
+}
+button.device {
+  background-color: white;
+  color: var(--text-color);
+  padding: 5px;
 }
 
 h1 {
@@ -83,6 +106,50 @@ nav a {
 }
 a:hover {
   cursor: pointer;
+}
+
+#modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.4);
+}
+.modal_content {
+  background-color: #fefefe;
+  /* display: block; */
+  margin: auto;
+  padding: 20px 40px 20px 40px;
+  border: 1px solid #888;
+}
+#modal_content {
+  display: inline;
+}
+/* The Close Button */
+#modal_close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+#modal_close:hover,
+#modal_close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.center {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-items: center;
 }
 
 main {

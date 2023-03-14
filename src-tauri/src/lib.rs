@@ -1,4 +1,4 @@
-use std::{error::Error, net::IpAddr};
+use std::{collections::HashMap, error::Error, net::IpAddr};
 
 use remarkable::Remarkable;
 use scan::scan_network;
@@ -12,8 +12,11 @@ mod state;
 
 pub use state::Device;
 
+pub type RemarkableError = Box<dyn Error>;
+
 pub struct RemarkableClient {
     pub state: State,
+    connections: HashMap<String, Remarkable>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -27,11 +30,14 @@ impl RemarkableClient {
     pub fn new() -> RemarkableClient {
         let state = State::load();
         println!("{state:?}");
-        RemarkableClient { state }
+        RemarkableClient {
+            state,
+            connections: HashMap::new(),
+        }
     }
 
     /// Scan local network for remarkable devices
-    pub async fn devices(&self) -> Result<Vec<ScanEntry>, Box<dyn Error>> {
+    pub async fn scan(&self) -> Result<Vec<ScanEntry>, RemarkableError> {
         let entries = scan_network().await?;
         return Ok(entries
             .into_iter()
@@ -43,10 +49,19 @@ impl RemarkableClient {
             .collect());
     }
 
-    pub async fn connect(&self, mac: &String) -> Result<(), ()> {
+    /// Add a valid device to state
+    pub fn add_device(&mut self, mac: String, device: Device) -> Result<(), RemarkableError> {
+        Remarkable::connect(device.ip, &device.username, &device.password)?;
+        self.state.devices.insert(mac, device);
+        Ok(())
+    }
+
+    /// Connect to a device
+    pub async fn connect(&self, mac: &String) -> Result<(), Box<dyn Error>> {
         match self.state.devices.get(mac) {
             Some(device) => {
-                let remarkable = Remarkable::connect(&device);
+                let remarkable =
+                    Remarkable::connect(device.ip, &device.username, &device.password)?;
             }
             None => {}
         }
